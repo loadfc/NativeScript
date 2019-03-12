@@ -84,21 +84,25 @@ export function livesync(rootView: View, context?: ModuleContext) {
     const liveSyncCore = global.__onLiveSyncCore;
     let reapplyAppStyles = false;
     let reapplyLocalStyles = false;
+    let rebuildModule = false;
 
     if (context && context.path) {
-        const extensions = ["css", "scss"];
+        const markupExtensions = ["xml"];
+        const styleExtensions = ["css", "scss"];
+
         const appStylesFullFileName = getCssFileName();
         const appStylesFileName = appStylesFullFileName.substring(0, appStylesFullFileName.lastIndexOf(".") + 1);
-        reapplyAppStyles = extensions.some(ext => context.path === appStylesFileName.concat(ext));
+        reapplyAppStyles = styleExtensions.some(ext => context.path === appStylesFileName.concat(ext));
         if (!reapplyAppStyles) {
-            reapplyLocalStyles = extensions.some(ext => context.path.endsWith(ext));
+            reapplyLocalStyles = styleExtensions.some(ext => context.path.endsWith(ext));
+            rebuildModule = markupExtensions.some(ext => context.path.endsWith(ext));
         }
     }
 
     if (reapplyAppStyles && rootView) {
         rootView._onCssStateChange();
     } else if (liveSyncCore) {
-        reapplyLocalStyles ? liveSyncCore(context) : liveSyncCore();
+        reapplyLocalStyles || rebuildModule ? liveSyncCore(context) : liveSyncCore();
     }
 }
 
