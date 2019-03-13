@@ -26,7 +26,10 @@ function ensureTrace() {
     }
 }
 
+const log = (v) => console.log(`---> ${v}`, v);
+
 export function parse(value: string | Template, context: any): View {
+    log("parse");
     if (typeof value === "function") {
         return (<Template>value)();
     } else {
@@ -42,6 +45,7 @@ export function parseMultipleTemplates(value: string, context: any): Array<Keyed
 }
 
 export function load(pathOrOptions: string | LoadOptions, context?: any): View {
+    log("load");
     let componentModule: ComponentModule;
     if (!context) {
         if (typeof pathOrOptions === "string") {
@@ -58,6 +62,7 @@ export function load(pathOrOptions: string | LoadOptions, context?: any): View {
 }
 
 export function loadPage(moduleNamePath: string, fileName: string, context?: any): View {
+    log("loadPage");
     const componentModule = loadInternal(fileName, context, moduleNamePath);
     const componentView = componentModule && componentModule.component;
     markAsModuleRoot(componentView, moduleNamePath);
@@ -65,6 +70,7 @@ export function loadPage(moduleNamePath: string, fileName: string, context?: any
 }
 
 const loadModule = profile("loadModule", (moduleNamePath: string, entry: ViewEntry): ModuleExports => {
+    log("loadModule");
     // web-pack case where developers register their page JS file manually.
     if (global.moduleExists(entry.moduleName)) {
         return global.loadModule(entry.moduleName);
@@ -81,6 +87,7 @@ const loadModule = profile("loadModule", (moduleNamePath: string, entry: ViewEnt
 })
 
 const viewFromBuilder = profile("viewFromBuilder", (moduleNamePath: string, moduleExports: any): View => {
+    log("viewFromBuilder");
     // Possible XML file path.
     const fileName = resolveFileName(moduleNamePath, "xml");
 
@@ -93,6 +100,7 @@ const viewFromBuilder = profile("viewFromBuilder", (moduleNamePath: string, modu
 })
 
 export const createViewFromEntry = profile("createViewFromEntry", (entry: ViewEntry): View => {
+    log("createViewFromEntry");
     if (entry.create) {
         return createView(entry);
     } else if (entry.moduleName) {
@@ -115,6 +123,7 @@ export const createViewFromEntry = profile("createViewFromEntry", (entry: ViewEn
 });
 
 const createView = profile("entry.create", (entry: ViewEntry): View => {
+    log("createView");
     const view = entry.create();
     if (!view) {
         throw new Error("Failed to create Page with entry.create() function.");
@@ -128,6 +137,7 @@ interface ModuleExports {
 }
 
 const moduleCreateView = profile("module.createView", (moduleNamePath: string, moduleExports: ModuleExports): View => {
+    log("moduleCreateView");
     const view = moduleExports.createPage();
     const cssFileName = resolveFileName(moduleNamePath, "css");
 
@@ -145,6 +155,7 @@ function markAsModuleRoot(componentView: View, moduleNamePath: string): void {
 }
 
 function loadInternal(fileName: string, context?: any, moduleNamePath?: string): ComponentModule {
+    log("loadInternal");
     let componentModule: ComponentModule;
 
     const appPath = knownFolders.currentApp().path;
@@ -168,6 +179,7 @@ function loadInternal(fileName: string, context?: any, moduleNamePath?: string):
 }
 
 function loadCustomComponent(componentPath: string, componentName?: string, attributes?: Object, context?: Object, parentPage?: View, isRootComponent: boolean = true, moduleNamePath?: string): ComponentModule {
+    log("loadCustomComponent");
     if (!parentPage && context) {
         // Read the parent page that was passed down below
         // https://github.com/NativeScript/NativeScript/issues/1639
@@ -270,6 +282,7 @@ function getExports(instance: ViewBase): any {
 }
 
 function parseInternal(value: string, context: any, uri?: string, moduleNamePath?: string): ComponentModule {
+    log("parseInternal");
     var start: xml2ui.XmlStringParser;
     var ui: xml2ui.ComponentParser;
 
