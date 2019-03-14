@@ -26,7 +26,7 @@ function ensureTrace() {
     }
 }
 
-const log = (v) => console.log(`---> ${v}`, v);
+const log = (v) => console.log(`---> ${v}`, `${v}`);
 
 export function parse(value: string | Template, context: any): View {
     log("parse");
@@ -63,6 +63,8 @@ export function load(pathOrOptions: string | LoadOptions, context?: any): View {
 
 export function loadPage(moduleNamePath: string, fileName: string, context?: any): View {
     log("loadPage");
+    log(moduleNamePath);
+    log(fileName);
     const componentModule = loadInternal(fileName, context, moduleNamePath);
     const componentView = componentModule && componentModule.component;
     markAsModuleRoot(componentView, moduleNamePath);
@@ -86,7 +88,7 @@ const loadModule = profile("loadModule", (moduleNamePath: string, entry: ViewEnt
     return null;
 })
 
-const viewFromBuilder = profile("viewFromBuilder", (moduleNamePath: string, moduleExports: any): View => {
+export const viewFromBuilder = profile("viewFromBuilder", (moduleNamePath: string, moduleExports: any): View => {
     log("viewFromBuilder");
     // Possible XML file path.
     const fileName = resolveFileName(moduleNamePath, "xml");
