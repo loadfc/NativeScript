@@ -478,6 +478,30 @@ export class TabView extends TabViewBase {
         }
     }
 
+    public _onLivesync(context?: ModuleContext): boolean {
+        super._onLivesync(context);
+        console.log("---> TabView._onLivesync()", context);
+
+        if (context && context.type === "markup" && context.path) {
+            if (this._moduleName && context.path.includes(this._moduleName)) {
+                console.log("---> ");
+                // if (this._moduleName === "app-root") {
+                //     _resetRootView(this._moduleName);
+                // }
+                return true;
+            }
+        }
+
+        const selectedIndex = this.selectedIndex;
+        const items = this.items;
+        const selectedTabViewItem = items[selectedIndex];
+        const view = selectedTabViewItem.view;
+
+        // // Frame, Layout, anything ...
+        // view._onLivesync();
+        return true;
+    }
+
     [selectedIndexProperty.setNative](value: number) {
         if (traceEnabled()) {
             traceWrite("TabView._onSelectedIndexPropertyChangedSetNativeValue(" + value + ")", traceCategories.Debug);
