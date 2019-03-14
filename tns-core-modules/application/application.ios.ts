@@ -20,6 +20,7 @@ import { ios as iosView, View } from "../ui/core/view";
 import { Frame, NavigationEntry } from "../ui/frame";
 import * as utils from "../utils/utils";
 import { profile, level as profilingLevel, Level } from "../profiling";
+import { ios } from "./application.ios";
 
 // NOTE: UIResponder with implementation of window - related to https://github.com/NativeScript/ios-runtime/issues/430
 // TODO: Refactor the UIResponder to use Typescript extends when this issue is resolved:
@@ -77,6 +78,7 @@ class IOSApplication implements IOSApplicationDefinition {
     private _currentOrientation = utils.ios.getter(UIDevice, UIDevice.currentDevice).orientation;
     private _window: UIWindow;
     private _observers: Array<NotificationObserver>;
+    private _rootModule: string;
     private _rootView: View;
 
     constructor() {
@@ -104,9 +106,20 @@ class IOSApplication implements IOSApplicationDefinition {
     get delegate(): typeof UIApplicationDelegate {
         return this._delegate;
     }
+
     set delegate(value: typeof UIApplicationDelegate) {
         if (this._delegate !== value) {
             this._delegate = value;
+        }
+    }
+
+    get rootModule(): string {
+        return this._rootModule;
+    }
+
+    set rootModule(moduleName: string) {
+        if (this._rootModule !== moduleName) {
+            this._rootModule = moduleName;
         }
     }
 
@@ -226,6 +239,11 @@ class IOSApplication implements IOSApplicationDefinition {
     }
 
     public _onLivesync(context?: ModuleContext): void {
+        // Set window controller when change in app root module.
+        if (context && context.path.includes(this._rootModule) && (context.type === "markup" || context.type === "script")) {
+            this.setWindowContent();
+        }
+
         // If view can't handle livesync set window controller.
         if (this._rootView && !this._rootView._onLivesync(context)) {
             this.setWindowContent();
@@ -302,6 +320,8 @@ const createRootFrame = { value: true };
 let started: boolean = false;
 export function start(entry?: string | NavigationEntry) {
     mainEntry = typeof entry === "string" ? { moduleName: entry } : entry;
+    console.log("---> ", mainEntry);
+    iosApp.rootModule = mainEntry.moduleName;
     started = true;
 
     if (!iosApp.nativeApp) {
