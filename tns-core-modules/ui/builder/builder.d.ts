@@ -8,9 +8,9 @@ import { NavigationEntry } from "../frame";
 
 /**
  * Deprecated. Use createViewFromEntry instead.
- * @param moduleNamePath 
- * @param fileName 
- * @param moduleExports 
+ * @param moduleNamePath
+ * @param fileName
+ * @param moduleExports
  */
 export function loadPage(moduleNamePath: string, fileName: string, moduleExports?: any): Page;
 export function createViewFromEntry(entry: NavigationEntry): View;

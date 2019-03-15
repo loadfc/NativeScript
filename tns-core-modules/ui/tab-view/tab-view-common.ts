@@ -160,32 +160,32 @@ export class TabViewBase extends View implements TabViewDefinition, AddChildFrom
         return items ? items.length : 0;
     }
 
-    // public _onLivesync(context?: ModuleContext): boolean {
-    //     super._onLivesync(context);
-    //     console.log("---> TabViewBase._onLivesync()", context);
+    public _onLivesync(context?: ModuleContext): boolean {
+        super._onLivesync(context);
+        console.log("---> TabViewBase._onLivesync()", context);
 
-    //     if (context && context.type == "markup" && context.path) {
-    //         if (this._moduleName && context.path.includes(this._moduleName)) {
-    //             // view.changeCssFile(contextPath);
-    //             // loadPage()
-    //             // loadPage(context.path, null);
-    //             console.log("---> ");
-    //             if (this._moduleName == "app-root") {
-    //                 _resetRootView(this._moduleName);
-    //             }
-    //             return true;
-    //         }
-    //     }
+        // if (context && context.type == "markup" && context.path) {
+        //     if (this._moduleName && context.path.includes(this._moduleName)) {
+        //         // view.changeCssFile(contextPath);
+        //         // loadPage()
+        //         // loadPage(context.path, null);
+        //         console.log("---> ");
+        //         if (this._moduleName == "app-root") {
+        //             _resetRootView(this._moduleName);
+        //         }
+        //         return true;
+        //     }
+        // }
 
-    //     const selectedIndex = this.selectedIndex;
-    //     const items = this.items;
-    //     const selectedTabViewItem = items[selectedIndex];
-    //     const view = selectedTabViewItem.view;
+        // const selectedIndex = this.selectedIndex;
+        // const items = this.items;
+        // const selectedTabViewItem = items[selectedIndex];
+        // const view = selectedTabViewItem.view;
 
-    //     // // Frame, Layout, anything ...
-    //     // view._onLivesync();
-    //     return true;
-    // }
+        // // // Frame, Layout, anything ...
+        // // view._onLivesync();
+        return true;
+    }
 
     public eachChild(callback: (child: ViewBase) => boolean) {
         const items = this.items;

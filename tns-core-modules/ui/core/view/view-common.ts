@@ -1,7 +1,8 @@
 // Definitions.
 import {
     View as ViewDefinition, Point, Size, Color, dip,
-    ShownModallyData
+    ShownModallyData,
+    View
 } from ".";
 
 import {
@@ -21,7 +22,7 @@ import {
     fromString as gestureFromString
 } from "../../gestures";
 
-import { createViewFromEntry } from "../../builder";
+import { createViewFromEntry, loadPage, parse } from "../../builder";
 import { StyleScope } from "../../styling/style-scope";
 import { LinearGradient } from "../../styling/linear-gradient";
 
@@ -139,6 +140,32 @@ export abstract class ViewCommon extends ViewBase implements ViewDefinition {
     public _onLivesync(context?: ModuleContext): boolean {
         _rootModalViews.forEach(v => v.closeModal());
         _rootModalViews.length = 0;
+
+        if (context && context.type === "markup" && context.path) {
+            console.log("---> context.path", context.path);
+            if (this._moduleName && context.path.includes(this._moduleName)) {
+                // const newPage = asdf(context.path, context.path);
+                return true;
+            } else {
+                eachDescendant(this, (child: ViewBase) => {
+                    if (child._moduleName && context.path.includes(child._moduleName)) {
+                        console.log("---> child", child);
+                        // if (child instanceof Page) {
+
+                        // const newPage = loadPage("./" + child._moduleName, context.path);
+                        const newPage = parse(context.path);
+                        const contentParent = (<any>newPage).content;
+                        const content = contentParent.remov
+                        const view = ;
+
+                        (<any>child).content = newPage.content; //Page
+                        // (<any>child).frame.currentPage = newPage;
+                        return true;
+                    }
+                    return true;
+                });
+            }
+        }
 
         if (context && context.type === "style" && context.path) {
             return this.changeLocalStyles(context.path);
