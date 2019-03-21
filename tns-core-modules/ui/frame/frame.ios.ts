@@ -8,6 +8,7 @@ import { FrameBase, View, layout, traceEnabled, traceWrite, traceCategories, isC
 import { _createIOSAnimatedTransitioning } from "./fragment.transitions";
 
 import * as utils from "../../utils/utils";
+import { loadPage } from "../builder/builder";
 
 export * from "./frame-common";
 
@@ -277,6 +278,45 @@ export class Frame extends FrameBase {
 
     public _onNavigatingTo(backstackEntry: BackstackEntry, isBack: boolean) {
         //
+    }
+
+    public _onLivesync(context?: ModuleContext): boolean {
+        // this._currentEntry => BackstackEntry
+        // this.currentEntry => NavigationEntry
+        if (!this._currentEntry || !this._currentEntry.entry) {
+            return false;
+        }
+
+        // const backstackEntry = this._currentEntry;
+        // console.log("backstackEntry.resolvedPage", backstackEntry.resolvedPage);
+
+        const asdf = loadPage("./second-page", "/second-page")
+
+        const backstackEntry = {
+            entry: this._currentEntry.entry,
+            resolvedPage: asdf,
+            navDepth: undefined,
+            fragmentTag: undefined
+        }
+        console.log("backstackEntry.resolvedPage", backstackEntry.resolvedPage);
+
+        // UIViewController
+        let viewController = backstackEntry.resolvedPage.ios;
+        viewController[ENTRY] = backstackEntry;
+        viewController[DELEGATE] = null;
+        // TODO:
+        viewController[TRANSITION] = { name: "non-animated" };
+
+        const oldControllers = this._ios.controller.viewControllers;
+        let newViewControllers = NSMutableArray.alloc().initWithArray(oldControllers);
+
+        const skippedNavController = newViewControllers.lastObject;
+        (<any>skippedNavController).isBackstackSkipped = true;
+        newViewControllers.removeLastObject();
+        newViewControllers.addObject(viewController);
+
+        this._ios.controller.setViewControllersAnimated(newViewControllers, false);
+        return true;
     }
 }
 
